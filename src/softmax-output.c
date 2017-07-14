@@ -17,7 +17,7 @@ struct NNP_CACHE_ALIGN softmax_context {
 };
 
 static void compute_softmax_output(
-	const struct softmax_context context[restrict static 1],
+	const struct softmax_context context[C99(restrict static) 1],
 	size_t sample)
 {
 	const nnp_softmax_function softmax = context->softmax_function;
@@ -36,7 +36,7 @@ struct NNP_CACHE_ALIGN inplace_softmax_context {
 };
 
 static void compute_inplace_softmax_output(
-	const struct inplace_softmax_context context[restrict static 1],
+	const struct inplace_softmax_context context[C99(restrict static) 1],
 	size_t sample)
 {
 	const nnp_inplace_softmax_function softmax = context->softmax_function;

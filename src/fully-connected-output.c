@@ -18,7 +18,7 @@ struct NNP_CACHE_ALIGN input_packing_context {
 };
 
 static void pack_input_matrix(
-	const struct input_packing_context context[restrict static 1],
+	const struct input_packing_context context[C99(restrict static) 1],
 	size_t outer_block_start, size_t input_channels_block_start,
 	size_t outer_block_size, size_t input_channels_block_size)
 {
@@ -53,7 +53,7 @@ struct NNP_CACHE_ALIGN kernel_packing_context {
 };
 
 static void pack_kernel_matrix(
-	const struct kernel_packing_context context[restrict static 1],
+	const struct kernel_packing_context context[C99(restrict static) 1],
 	size_t outer_block_start, size_t outer_block_size)
 {
 	const float* matrix                     = context->matrix;
@@ -97,7 +97,7 @@ struct NNP_CACHE_ALIGN matrix_multiplication_context {
 };
 
 static void compute_matrix_multiplication(
-	const struct matrix_multiplication_context context[restrict static 1],
+	const struct matrix_multiplication_context context[C99(restrict static) 1],
 	size_t output_channels_block_start, size_t batch_subblock_start,
 	size_t output_channels_block_size,  size_t batch_subblock_size)
 {

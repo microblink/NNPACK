@@ -112,7 +112,7 @@ static void compute_max_pooling_forward_2x2_2x2__avx2(
 #endif
 
 static void compute_pooling_output(
-	const struct pooling_context context[restrict static 1],
+	const struct pooling_context context[C99(restrict static) 1],
 	size_t sample, size_t channel)
 {
 	const size_t channels                       = context->channels;

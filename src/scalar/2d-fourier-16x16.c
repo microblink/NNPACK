@@ -13,8 +13,8 @@
 
 
 void nnp_fft16x16_with_offset__scalar(
-	const float data[restrict static 1],
-	float transform[restrict static 1],
+	const float data[C99(restrict static) 1],
+	float transform[C99(restrict static) 1],
 	size_t data_stride, size_t transform_stride,
 	uint32_t row_count, uint32_t column_count,
 	uint32_t row_offset, uint32_t column_offset)
@@ -168,8 +168,8 @@ void nnp_fft16x16_with_offset__scalar(
 }
 
 void nnp_ifft16x16_with_offset__scalar(
-	const float transform[restrict static 1],
-	float data[restrict static 1],
+	const float transform[C99(restrict static) 1],
+	float data[C99(restrict static) 1],
 	size_t transform_stride, size_t data_stride,
 	uint32_t row_count, uint32_t column_count,
 	uint32_t row_offset, uint32_t column_offset)
@@ -317,9 +317,9 @@ void nnp_ifft16x16_with_offset__scalar(
 }
 
 void nnp_ifft16x16_with_bias__scalar(
-	const float transform[restrict static 1],
-	float data[restrict static 1],
-	const float bias[restrict static 1],
+	const float transform[C99(restrict static) 1],
+	float data[C99(restrict static) 1],
+	const float bias[C99(restrict static) 1],
 	size_t transform_stride, size_t data_stride,
 	uint32_t row_count, uint32_t column_count)
 {
@@ -468,9 +468,9 @@ void nnp_ifft16x16_with_bias__scalar(
 }
 
 void nnp_ifft16x16_with_bias_with_relu__scalar(
-	const float transform[restrict static 1],
-	float data[restrict static 1],
-	const float bias[restrict static 1],
+	const float transform[C99(restrict static) 1],
+	float data[C99(restrict static) 1],
+	const float bias[C99(restrict static) 1],
 	size_t transform_stride, size_t data_stride,
 	uint32_t row_count, uint32_t column_count)
 {

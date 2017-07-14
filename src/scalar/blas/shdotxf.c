@@ -4,10 +4,10 @@
 
 
 void nnp_shdotxf1__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 1],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 1],
 	size_t stride_y,
-	float sum[restrict static 1],
+	float sum[C99(restrict static) 1],
 	size_t n)
 {
 	float acc0 = 0.0f;
@@ -20,10 +20,10 @@ void nnp_shdotxf1__scalar(
 }
 
 void nnp_shdotxf2__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 2],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 2],
 	size_t stride_y,
-	float sum[restrict static 2],
+	float sum[C99(restrict static) 2],
 	size_t n)
 {
 	float acc0, acc1;
@@ -40,10 +40,10 @@ void nnp_shdotxf2__scalar(
 }
 
 void nnp_shdotxf3__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 3],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 3],
 	size_t stride_y,
-	float sum[restrict static 3],
+	float sum[C99(restrict static) 3],
 	size_t n)
 {
 	float acc0, acc1, acc2;
@@ -63,10 +63,10 @@ void nnp_shdotxf3__scalar(
 }
 
 void nnp_shdotxf4__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 4],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 4],
 	size_t stride_y,
-	float sum[restrict static 4],
+	float sum[C99(restrict static) 4],
 	size_t n)
 {
 	float acc0, acc1, acc2, acc3;
@@ -89,10 +89,10 @@ void nnp_shdotxf4__scalar(
 }
 
 void nnp_shdotxf5__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 5],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 5],
 	size_t stride_y,
-	float sum[restrict static 5],
+	float sum[C99(restrict static) 5],
 	size_t n)
 {
 	float acc0, acc1, acc2, acc3, acc4;
@@ -118,10 +118,10 @@ void nnp_shdotxf5__scalar(
 }
 
 void nnp_shdotxf6__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 6],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 6],
 	size_t stride_y,
-	float sum[restrict static 6],
+	float sum[C99(restrict static) 6],
 	size_t n)
 {
 	float acc0, acc1, acc2, acc3, acc4, acc5;
@@ -150,10 +150,10 @@ void nnp_shdotxf6__scalar(
 }
 
 void nnp_shdotxf7__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 7],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 7],
 	size_t stride_y,
-	float sum[restrict static 7],
+	float sum[C99(restrict static) 7],
 	size_t n)
 {
 	float acc0, acc1, acc2, acc3, acc4, acc5, acc6;
@@ -185,10 +185,10 @@ void nnp_shdotxf7__scalar(
 }
 
 void nnp_shdotxf8__scalar(
-	const float x[restrict static 1],
-	const uint16_t y[restrict static 8],
+	const float x[C99(restrict static) 1],
+	const uint16_t y[C99(restrict static) 8],
 	size_t stride_y,
-	float sum[restrict static 8],
+	float sum[C99(restrict static) 8],
 	size_t n)
 {
 	float acc0, acc1, acc2, acc3, acc4, acc5, acc6, acc7;
