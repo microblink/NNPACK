@@ -19,7 +19,7 @@ struct NNP_CACHE_ALIGN relu_context {
 };
 
 static void compute_relu_output(
-	const struct relu_context context[restrict static 1],
+	const struct relu_context context[C99(restrict static) 1],
 	size_t block_start, size_t block_size)
 {
 	nnp_relu_function relu = context->relu_function;
@@ -37,7 +37,7 @@ struct NNP_CACHE_ALIGN inplace_relu_context {
 };
 
 static void compute_inplace_relu_output(
-	const struct inplace_relu_context context[restrict static 1],
+	const struct inplace_relu_context context[C99(restrict static) 1],
 	size_t block_start, size_t block_size)
 {
 	nnp_inplace_relu_function relu = context->relu_function;

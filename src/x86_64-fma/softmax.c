@@ -5,15 +5,15 @@
 #include <nnpack/utils.h>
 #include <nnpack/softmax.h>
 
-float max__avx(size_t n, const float v[restrict static n]);
-float sum_exp_minus_c__avx2(size_t n, const float v[restrict static n], float c);
-void scaled_exp_minus_c__avx2(size_t n, const float x[restrict static n], float y[restrict static n], float scale, float c);
-void inplace_scaled_exp_minus_c__avx2(size_t n, const float v[restrict static n], float scale, float c);
+float max__avx(size_t n, const float v[C99(restrict static) n]);
+float sum_exp_minus_c__avx2(size_t n, const float v[C99(restrict static) n], float c);
+void scaled_exp_minus_c__avx2(size_t n, const float x[C99(restrict static) n], float y[C99(restrict static) n], float scale, float c);
+void inplace_scaled_exp_minus_c__avx2(size_t n, const float v[C99(restrict static) n], float scale, float c);
 
 void nnp_softmax__avx2(
 	size_t n,
-	const float x[restrict static n],
-	float y[restrict static n])
+	const float x[C99(restrict static) n],
+	float y[C99(restrict static) n])
 {
 	const float c = max__avx(n, x);
 	const float sum = sum_exp_minus_c__avx2(n, x, c);
@@ -23,7 +23,7 @@ void nnp_softmax__avx2(
 
 void nnp_inplace_softmax__avx2(
 	size_t n,
-	float v[restrict static n])
+	float v[C99(restrict static) n])
 {
 	const float c = max__avx(n, v);
 	const float sum = sum_exp_minus_c__avx2(n, v, c);

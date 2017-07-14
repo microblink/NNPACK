@@ -15,7 +15,7 @@ struct NNP_CACHE_ALIGN fully_connected_inference_context {
 };
 
 static void compute_fully_connected_inference_f32(
-	const struct fully_connected_inference_context context[restrict static 1],
+	const struct fully_connected_inference_context context[C99(restrict static) 1],
 	size_t output_channels_subblock_start, size_t output_channels_subblock_size)
 {
 	const size_t input_channels      = context->input_channels;
@@ -29,7 +29,7 @@ static void compute_fully_connected_inference_f32(
 }
 
 static void compute_fully_connected_inference_f16f32(
-	const struct fully_connected_inference_context context[restrict static 1],
+	const struct fully_connected_inference_context context[C99(restrict static) 1],
 	size_t output_channels_subblock_start, size_t output_channels_subblock_size)
 {
 	const size_t input_channels        = context->input_channels;

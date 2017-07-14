@@ -28,7 +28,7 @@ struct NNP_CACHE_ALIGN kernel_transform_context {
 };
 
 static void compute_kernel_transform(
-	const struct kernel_transform_context context[restrict static 1],
+	const struct kernel_transform_context context[C99(restrict static) 1],
 	size_t output_channels_subblock_start, size_t input_channels_block_offset,
 	size_t output_channels_subblock_size,  size_t input_channels_block_increment)
 {
@@ -73,7 +73,7 @@ struct NNP_CACHE_ALIGN input_transform_context {
 };
 
 static void compute_input_transform(
-	const struct input_transform_context context[restrict static 1],
+	const struct input_transform_context context[C99(restrict static) 1],
 	size_t input_channels_block_offset, size_t tiles_subblock_start,
 	size_t input_channels_block_range,  size_t tiles_subblock_size)
 {
@@ -136,7 +136,7 @@ struct NNP_CACHE_ALIGN output_transform_context {
 };
 
 static void compute_output_transform(
-	const struct output_transform_context context[restrict static 1],
+	const struct output_transform_context context[C99(restrict static) 1],
 	size_t output_channels_subblock_start, size_t tiles_subblock_start,
 	size_t output_channels_subblock_size,  size_t tiles_subblock_size)
 {
@@ -200,7 +200,7 @@ struct NNP_CACHE_ALIGN tuple_multiplication_context {
 };
 
 static void compute_tuple_multiplication(
-	const struct tuple_multiplication_context context[restrict static 1],
+	const struct tuple_multiplication_context context[C99(restrict static) 1],
 	size_t tiles_block_start, size_t output_channels_subblock_start,
 	size_t tiles_block_size,  size_t output_channels_subblock_size)
 {
@@ -261,7 +261,7 @@ struct NNP_CACHE_ALIGN kernel_packing_context {
 };
 
 static void compute_kernel_packing(
-	const struct kernel_packing_context context[restrict static 1],
+	const struct kernel_packing_context context[C99(restrict static) 1],
 	size_t output_channels_subblock_start, size_t reduction_block_offset,
 	size_t output_channels_subblock_size,  size_t reduction_block_range)
 {
@@ -297,7 +297,7 @@ struct NNP_CACHE_ALIGN input_packing_context {
 };
 
 static void compute_input_packing(
-	const struct input_packing_context context[restrict static 1],
+	const struct input_packing_context context[C99(restrict static) 1],
 	size_t reduction_block_offset, size_t output_image_subblock_start,
 	size_t reduction_block_range,  size_t output_image_subblock_size)
 {
@@ -359,7 +359,7 @@ struct NNP_CACHE_ALIGN matrix_multiplication_context {
 };
 
 static void compute_matrix_multiplication(
-	const struct matrix_multiplication_context context[restrict static 1],
+	const struct matrix_multiplication_context context[C99(restrict static) 1],
 	size_t output_channels_block_start, size_t output_image_subblock_start,
 	size_t output_channels_block_size,  size_t output_image_subblock_size)
 {
@@ -423,7 +423,7 @@ struct NNP_CACHE_ALIGN direct_convolution_context {
 };
 
 static void compute_direct_convolution(
-	const struct direct_convolution_context context[restrict static 1],
+	const struct direct_convolution_context context[C99(restrict static) 1],
 	size_t output_channels_block_start, size_t output_channels_block_size)
 {
 	const size_t image_elements            = context->image_elements;
