@@ -16,6 +16,7 @@
 	#include <emscripten.h>
 #endif
 
+#ifndef _MSC_VER
 inline static double read_timer() {
 #if defined(__linux__) || defined(__native_client__)
 	struct timespec ts;
@@ -35,6 +36,9 @@ inline static double read_timer() {
 	#error No implementation available
 #endif
 }
+#else
+extern double read_timer();
+#endif // _MSC_VER
 
 #define NNP_TOTAL_START(profile_ptr) \
 	double total_start; \
@@ -108,6 +112,8 @@ inline static void* allocate_memory(size_t memory_size) {
 		}
 	}
 	return memory_block;
+#elif defined( _WIN32 )
+    return _aligned_malloc( memory_size, 64 );
 #else
 	void* memory_block = NULL;
 	int allocation_result = posix_memalign(&memory_block, 64, memory_size);
@@ -120,6 +126,8 @@ inline static void release_memory(void* memory_block, size_t memory_size) {
 	if (memory_block != NULL) {
 		munmap(memory_block, memory_size);
 	}
+#elif defined( _WIN32 )
+    _aligned_free( memory_block ); (void)memory_size;
 #else
 	free(memory_block);
 #endif
