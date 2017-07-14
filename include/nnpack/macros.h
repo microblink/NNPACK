@@ -45,7 +45,11 @@
 	#define NNP_BACKEND_X86_64 0
 #endif
 
+#ifndef _MSC_VER
 #define NNP_ALIGN(alignment) __attribute__((__aligned__(alignment)))
+#else
+#define NNP_ALIGN(alignment) __declspec(align(alignment))
+#endif // _MSC_VER
 #define NNP_SIMD_ALIGN NNP_ALIGN(64)
 #define NNP_CACHE_ALIGN NNP_ALIGN(64)
 
