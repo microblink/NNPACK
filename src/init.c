@@ -2,7 +2,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef _WIN32
 #include <pthread.h>
+#endif // !_WIN32
 
 #if defined(__i386__) || defined(__x86_64__)
 	#include <cpuid.h>
@@ -29,7 +31,9 @@
 #include <nnpack/softmax.h>
 
 struct hardware_info nnp_hwinfo = { };
+#ifndef _WIN32
 static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
+#endif // !_WIN32
 
 
 #if (defined(__i386__) || defined(__x86_64__)) && !defined(__ANDROID__)
@@ -681,7 +685,11 @@ static void init_hwinfo(void) {
 }
 
 enum nnp_status nnp_initialize(void) {
+#ifdef _WIN32
+    init_hwinfo();
+#else
 	pthread_once(&hwinfo_init_control, &init_hwinfo);
+#endif // _WIN32
 	if (nnp_hwinfo.supported) {
 		return nnp_status_success;
 	} else {
