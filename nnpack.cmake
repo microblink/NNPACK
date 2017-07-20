@@ -10,6 +10,7 @@ if ( MSVC AND NOT NNPACK_IN_MSVC_SUBPROJECT )
       -T v141_clang_c2
       -DNNPACK_IN_MSVC_SUBPROJECT:BOOL=true
       -DNNPACK_USE_MB_DISPATCH:BOOL=true
+      -DMB_GLOBAL_ENABLE_TIMER:BOOL=false
       ${CMAKE_CURRENT_LIST_DIR}
     WORKING_DIRECTORY "${binary_dir}"
     ERROR_VARIABLE    stderr
@@ -30,7 +31,6 @@ endif()
 #include( "${CMAKE_CURRENT_LIST_DIR}/../../core-utils/cmake-build/common_settings.cmake" )
 include( "${CMAKE_CURRENT_LIST_DIR}/../../core-utils/cmake-build/common_utils.cmake"    )
 
-set( nnpack_source ${CMAKE_CURRENT_LIST_DIR} )
 #file( GLOB_RECURSE nnpack_sources "${nnpack_source}/src/*.c" )
 file( GLOB_RECURSE nnpack_common_headers "${nnpack_source}/include/*.h"        )
 file( GLOB         nnpack_common_sources "${nnpack_source}/src/*.c"            )
