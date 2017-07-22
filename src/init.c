@@ -2,9 +2,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <windows.h>
+
+#include <assert.h>
+#include <malloc.h>
+#else
 #include <pthread.h>
-#endif // !_WIN32
+#endif // OS
 
 #if defined(__i386__) || defined(__x86_64__)
 	#include <cpuid.h>
@@ -30,6 +35,28 @@
 #include <nnpack/relu.h>
 #include <nnpack/softmax.h>
 
+#ifdef _MSC_VER
+	extern void cpuid_impl(uint32_t level, uint32_t * __eax, uint32_t * __ebx, uint32_t * __ecx, uint32_t * __edx);
+	#undef __cpuid
+	#define __cpuid(__level, __eax, __ebx, __ecx, __edx) cpuid_impl(__level, &__eax, &__ebx, &__ecx, &__edx)
+
+	extern void cpuid_count_impl(uint32_t level, uint32_t count, uint32_t * __eax, uint32_t * __ebx, uint32_t * __ecx, uint32_t * __edx);
+	#undef __cpuid_count
+	#define __cpuid_count(__level, __count, __eax, __ebx, __ecx, __edx) cpuid_count_impl(__level, __count, &__eax, &__ebx, &__ecx, &__edx)
+
+	inline uint32_t __get_cpuid_max_impl(uint32_t __level, uint32_t *__sig)
+	{
+		uint32_t __eax, __ebx, __ecx, __edx;
+		__cpuid(__level, __eax, __ebx, __ecx, __edx);
+		if (__sig)
+			*__sig = __ebx;
+		return __eax;
+	}
+	#define __get_cpuid_max __get_cpuid_max_impl
+
+	extern uint64_t xgetbv(uint32_t ext_ctrl_reg);
+#endif // _MSC_VER
+
 struct hardware_info nnp_hwinfo = { };
 #ifndef _WIN32
 static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
@@ -38,11 +65,11 @@ static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 
 #if (defined(__i386__) || defined(__x86_64__)) && !defined(__ANDROID__)
 
-	#ifndef __native_client__
+	#if !defined( __native_client__ ) && !defined( _MSC_VER )
 		/*
 		 * This instruction may be not supported by Native Client validator, make sure it doesn't appear in the binary
 		 */
-		static inline uint64_t xgetbv(uint32_t ext_ctrl_reg) {
+		uint64_t xgetbv(uint32_t ext_ctrl_reg) {
 			uint32_t lo, hi;
 			asm(".byte 0x0F, 0x01, 0xD0" : "=a" (lo), "=d" (hi) : "c" (ext_ctrl_reg));
 			return (((uint64_t) hi) << 32) | (uint64_t) lo;
