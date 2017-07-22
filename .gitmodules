@@ -1,0 +1,12 @@
+[submodule "psimd"]
+	path = psimd
+	url = https://github.com/Maratyszcza/psimd.git
+[submodule "fp16"]
+	path = fp16
+	url = https://github.com/Maratyszcza/FP16.git
+[submodule "fxdiv"]
+	path = fxdiv
+	url = https://github.com/Maratyszcza/FXdiv.git
+[submodule "pthreadpool"]
+	path = pthreadpool
+	url = https://github.com/Maratyszcza/pthreadpool.git
