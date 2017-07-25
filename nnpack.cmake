@@ -96,8 +96,10 @@ elseif( ANDROID )
     target_link_libraries( NNPACK PUBLIC cpufeatures )
   endif()
 elseif( iOS )
+  string( REPLACE ";" " " neon_source_files "${nnpack_neon_sources}" )
   set_target_properties( NNPACK PROPERTIES
     XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7] "$(OTHER_CFLAGS) -mfpu=neon-fp16"
     XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s] "$(OTHER_CFLAGS) -mfpu=neon-fp16"
+    XCODE_ATTRIBUTE_EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] "${neon_source_files}" # those sources fail to build for simulator
   )
 endif()
