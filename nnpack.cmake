@@ -101,5 +101,6 @@ elseif( iOS )
     XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7] "$(OTHER_CFLAGS) -mfpu=neon-fp16"
     XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s] "$(OTHER_CFLAGS) -mfpu=neon-fp16"
     XCODE_ATTRIBUTE_EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] "${neon_source_files}" # those sources fail to build for simulator
+    XCODE_ATTRIBUTE_GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] "NNP_BACKEND_PSIMD" # don't use AVX2 on iOS simulator
   )
 endif()
