@@ -2,14 +2,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#ifdef _WIN32
-#include <windows.h>
-
-#include <assert.h>
-#include <malloc.h>
-#else
+#ifndef _WIN32
 #include <pthread.h>
-#endif // OS
+#endif // !_WIN32
 
 #if defined(__i386__) || defined(__x86_64__)
 	#include <cpuid.h>
@@ -25,6 +20,8 @@
 
 #if defined(__ANDROID__) && defined(__arm__)
 	#include <cpu-features.h>
+
+    #include <assert.h>
 #endif
 
 
