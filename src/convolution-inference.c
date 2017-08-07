@@ -1192,9 +1192,7 @@ enum nnp_status nnp_convolution_inference(
 
 cleanup:
 	NNP_TOTAL_END(profile)
-#ifndef NDEBUG
-    assert(!"Programmer error");
-    __builtin_unreachable();
-#endif // NDEBUG
+    assert((status==nnp_status_success) && "Programmer error");
+    __builtin_assume(status==nnp_status_success);
 	return status;
 }
