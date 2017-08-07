@@ -547,7 +547,9 @@ static void init_hwinfo(void) {
 			nnp_hwinfo.supported = true;
 		#elif NNP_BACKEND_ARM
             // https://community.arm.com/tools/b/blog/posts/arm-cortex-a-processors-and-gcc-command-lines
-			#if defined(__ANDROID__) && defined(__arm__) && !defined(__aarch64__)
+            #if NNP_DISABLE_HALF_PRECISION
+                const bool has_fp16 = false;
+			#elif defined(__ANDROID__) && defined(__arm__) && !defined(__aarch64__)
 				const bool has_fp16 = (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_VFP_FP16) != 0;
             #elif defined(__aarch64__) || defined(__ARM_ARCH_7S__)
                 const bool has_fp16 = true;
@@ -635,7 +637,8 @@ static void init_hwinfo(void) {
 				.cX_conjb_transc_upto_mr_x_nr = (nnp_full_tuple_gemm_function) nnp_c4gemm_conjb_transc_upto_2x2__neon,
 			};
 			#if defined(__ANDROID__) && defined(__arm__) && !defined(__aarch64__)
-				nnp_hwinfo.supported = (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0;
+                assert( (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0 );
+                nnp_hwinfo.supported = true;
 			#else
 				nnp_hwinfo.supported = true;
 			#endif
