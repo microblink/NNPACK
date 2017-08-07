@@ -14,6 +14,7 @@
 #include <nnpack/activations.h>
 #include <nnpack/validation.h>
 
+#include <assert.h>
 
 struct NNP_CACHE_ALIGN kernel_transform_context {
 	nnp_transform_2d_with_offset transform_function;
@@ -1277,5 +1278,9 @@ enum nnp_status nnp_convolution_inference(
 
 cleanup:
 	NNP_TOTAL_END(profile)
+#ifndef NDEBUG
+    assert(!"Programmer error");
+    __builtin_unreachable();
+#endif // NDEBUG
 	return status;
 }
