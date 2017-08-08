@@ -67,9 +67,10 @@ target_include_directories( NNPACK PUBLIC  ${nnpack_interface_includes}   )
 target_include_directories( NNPACK PRIVATE ${nnpack_source}/src           )
 target_include_directories( NNPACK PRIVATE ${nnpack_source}/src/ref       )
 target_include_directories( NNPACK PRIVATE ${nnpack_source}/fp16/include  )
-target_include_directories( NNPACK PRIVATE ${nnpack_source}/FXdiv/include )
+target_include_directories( NNPACK PRIVATE ${nnpack_source}/fxdiv/include )
 target_include_directories( NNPACK PRIVATE ${nnpack_source}/psimd/include )
 
+target_compile_definitions( NNPACK PRIVATE NNP_DISABLE_HALF_PRECISION=1 )
 if ( DEFINED nnpack_explicit_backend )
   target_compile_definitions( NNPACK PRIVATE NNP_BACKEND_${nnpack_explicit_backend}=1 )
 endif()
@@ -98,7 +99,7 @@ elseif( ANDROID )
 elseif( iOS )
   string( REPLACE ";" " " neon_source_files "${nnpack_neon_sources}" )
   set_target_properties( NNPACK PROPERTIES
-    XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7] "$(OTHER_CFLAGS) -mfpu=neon-fp16"
+    XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7]  "$(OTHER_CFLAGS) -mfpu=neon-fp16"
     XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s] "$(OTHER_CFLAGS) -mfpu=neon-fp16"
     XCODE_ATTRIBUTE_EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] "${neon_source_files}" # those sources fail to build for simulator
     XCODE_ATTRIBUTE_GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] "NNP_BACKEND_PSIMD" # don't use AVX2 on iOS simulator
