@@ -1,3 +1,5 @@
+#ifdef __arm__
+
 #include <nnpack/assembly.h>
 
 # void nnp_sgemm_only_6x8__neon(
@@ -164,4 +166,6 @@ END_FUNCTION nnp_sgemm_only_6x8__aarch32_neon
 
 #ifdef __ELF__
 .section ".note.GNU-stack","",%progbits
+#endif
+
 #endif

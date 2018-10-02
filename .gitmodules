@@ -10,3 +10,6 @@
 [submodule "pthreadpool"]
 	path = pthreadpool
 	url = https://github.com/Maratyszcza/pthreadpool.git
+[submodule "cpuinfo"]
+	path = cpuinfo
+	url = https://github.com/Maratyszcza/cpuinfo.git

@@ -1,3 +1,5 @@
+#ifdef __arm__
+
 #include <nnpack/assembly.h>
 
 # void nnp_h4gemm_only_3x3__aarch32_neonhp(
@@ -909,4 +911,6 @@ END_FUNCTION nnp_h4gemm_only_3x3__aarch32_neonhparith
 
 #ifdef __ELF__
 .section ".note.GNU-stack","",%progbits
+#endif
+
 #endif

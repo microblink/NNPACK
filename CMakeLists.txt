@@ -1,5 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12 FATAL_ERROR)
 
+include( nnpack_pre.cmake )
+
 INCLUDE(GNUInstallDirs)
 
 # ---[ Project and semantic versioning.
@@ -745,3 +747,5 @@ IF(NNPACK_BUILD_TESTS)
     ADD_TEST(softmax-output-imagenet softmax-output-imagenet-test)
   ENDIF()
 ENDIF()
+
+include( nnpack_post.cmake )

@@ -1,3 +1,5 @@
+#ifndef NNP_ASSEMBLY_H
+#define NNP_ASSEMBLY_H
 #ifdef __ELF__
 	.macro BEGIN_FUNCTION name
 		.text
@@ -20,4 +22,5 @@
 
 	.macro END_FUNCTION name
 	.endm
+#endif
 #endif
