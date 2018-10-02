@@ -17,8 +17,7 @@ struct hardware_info nnp_hwinfo = { };
 static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 
 
-#if (CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64) && !defined(__ANDROID__)
-	static void init_x86_hwinfo(void) {
+	static void init_cache_info(void) {
 		const struct cpuinfo_cache* l1d = cpuinfo_get_l1d_cache(0);
 		if (l1d != NULL) {
 			nnp_hwinfo.cache.l1 = (struct cache_info) {
@@ -55,53 +54,6 @@ static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 			}
 		}
 	}
-#endif
-
-#if !(CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64) || defined(__ANDROID__)
-	static void init_static_hwinfo(void) {
-		nnp_hwinfo.cache.l1 = (struct cache_info) {
-			.size = 16 * 1024,
-			.associativity = 4,
-			.threads = 1,
-			.inclusive = true,
-		};
-		nnp_hwinfo.cache.l2 = (struct cache_info) {
-			.size = 128 * 1024,
-			.associativity = 4,
-			.threads = 1,
-			.inclusive = true,
-		};
-		nnp_hwinfo.cache.l3 = (struct cache_info) {
-			.size = 2 * 1024 * 1024,
-			.associativity = 8,
-			.threads = 1,
-			.inclusive = true,
-		};
-	}
-#endif
-
-#if !CPUINFO_ARCH_X86 && !CPUINFO_ARCH_X86_64 && defined(__APPLE__)
-	static void init_static_ios_hwinfo(void) {
-		nnp_hwinfo.cache.l1 = (struct cache_info) {
-			.size = 32 * 1024,
-			.associativity = 1,
-			.threads = 1,
-			.inclusive = false,
-		};
-		nnp_hwinfo.cache.l2 = (struct cache_info) {
-			.size = 1 * 1024 * 1024,
-			.associativity = 1,
-			.threads = 1,
-			.inclusive = false,
-		};
-		nnp_hwinfo.cache.l3 = (struct cache_info) {
-			.size = 2 * 1024 * 1024,
-			.associativity = 8,
-			.threads = 1,
-			.inclusive = false,
-		};
-	}
-#endif
 
 #if !NNP_CONVOLUTION_ONLY
 	#if NNP_BACKEND_X86_64
@@ -196,13 +148,7 @@ static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 #endif /* !NNP_CONVOLUTION_ONLY */
 
 static void init_hwinfo(void) {
-	#if (CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64) && !defined(__ANDROID__)
-		init_x86_hwinfo();
-	#elif !CPUINFO_ARCH_X86 && !CPUINFO_ARCH_X86_64 && defined(__APPLE__)
-		init_static_ios_hwinfo();
-	#else
-		init_static_hwinfo();
-	#endif
+    init_cache_info();
 
 	/* Compute high-level cache blocking parameters */
 	nnp_hwinfo.blocking.l1 = nnp_hwinfo.cache.l1.size;
@@ -218,11 +164,18 @@ static void init_hwinfo(void) {
 			nnp_hwinfo.blocking.l2 /= nnp_hwinfo.cache.l2.threads;
 		}
 	}
+    if ( nnp_hwinfo.cache.l3.size == 0 ) { // https://github.com/Maratyszcza/NNPACK/issues/33
+        nnp_hwinfo.cache.l3 = nnp_hwinfo.cache.l2;
+        nnp_hwinfo.cache.l3.inclusive = false;
+    }
 	if (nnp_hwinfo.cache.l3.size != 0) {
 		nnp_hwinfo.blocking.l3 = nnp_hwinfo.cache.l3.size;
 		if (nnp_hwinfo.cache.l3.inclusive) {
 			nnp_hwinfo.blocking.l3 -= nnp_hwinfo.cache.l2.size;
 		}
+        if ( nnp_hwinfo.cache.l3.threads > 1 ) {
+            nnp_hwinfo.blocking.l3 /= nnp_hwinfo.cache.l3.threads;
+        }
 	}
 	nnp_hwinfo.blocking.l4 = nnp_hwinfo.cache.l4.size;
 	if (nnp_hwinfo.cache.l1.size && nnp_hwinfo.cache.l2.size && nnp_hwinfo.cache.l3.size) {
@@ -413,7 +366,7 @@ static void init_hwinfo(void) {
 			nnp_hwinfo.transforms.owt_f6x6_3x3_with_bias_with_relu = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3_with_bias_with_relu__neon;
 			nnp_hwinfo.transforms.owt_f6x6_3x3s2_with_bias = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3s2_with_bias__neon;
 			nnp_hwinfo.transforms.owt_f6x6_3x3s2_with_bias_with_relu = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3s2_with_bias_with_relu__neon;
-			if (cpuinfo_has_arm_neon_fp16()) {
+            if (cpuinfo_has_arm_neon_fp16() && !NNP_DISABLE_HALF_PRECISION) {
 				nnp_hwinfo.transforms.iwt_f6x6_3x3_fp16_with_offset = (nnp_transform_2d_with_offset) nnp_iwt8x8_3x3_fp16_with_offset__neonhp;
 				nnp_hwinfo.transforms.kwt_f6x6_3x3_fp16 = (nnp_transform_2d_with_offset) nnp_kwt8x8_3x3_fp16__neonhp;
 				nnp_hwinfo.transforms.owt_f6x6_3x3_fp16_with_bias = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3_fp16_with_bias__neonhp;
@@ -466,7 +419,7 @@ static void init_hwinfo(void) {
 						(nnp_fast_tuple_gemm_function) nnp_s4gemm_only_3x3__aarch32_neon2;
 				}
 			#endif
-			if (cpuinfo_has_arm_neon_fp16()) {
+			if (cpuinfo_has_arm_neon_fp16() && !NNP_DISABLE_HALF_PRECISION) {
 				nnp_hwinfo.hxgemm = (struct hxgemm) {
 					.mr = 3,
 					.nr = 3,
@@ -475,7 +428,7 @@ static void init_hwinfo(void) {
 				};
 			}
 			#if CPUINFO_ARCH_ARM
-				if (cpuinfo_has_arm_neon_fp16_arith()) {
+				if (cpuinfo_has_arm_neon_fp16_arith() && !NNP_DISABLE_HALF_PRECISION) {
 					nnp_hwinfo.hxgemm.only_mr_x_nr =
 						(nnp_fast_tuple_gemm_function) nnp_h4gemm_only_3x3__aarch32_neonhparith;
 					nnp_hwinfo.hxgemm.upto_mr_x_nr =
@@ -485,7 +438,7 @@ static void init_hwinfo(void) {
 						(nnp_fast_tuple_gemm_function) nnp_h4gemm_only_3x3__aarch32_neon2;
 					nnp_hwinfo.hxgemm.upto_mr_x_nr =
 						(nnp_full_tuple_gemm_function) nnp_h4gemm_upto_3x3__aarch32_neon2;
-				} else if (cpuinfo_has_arm_neon_fp16()) {
+				} else if (cpuinfo_has_arm_neon_fp16() && !NNP_DISABLE_HALF_PRECISION) {
 					nnp_hwinfo.hxgemm.only_mr_x_nr =
 						(nnp_fast_tuple_gemm_function) nnp_h4gemm_only_3x3__aarch32_neonhp;
 				}
