@@ -21,3 +21,15 @@ set( FXDIV_SOURCE_DIR       "${CMAKE_CURRENT_LIST_DIR}/fxdiv"                   
 set( PSIMD_SOURCE_DIR       "${CMAKE_CURRENT_LIST_DIR}/psimd"                             )
 set( PTHREADPOOL_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/pthreadpool"                       )
 set( GOOGLETEST_SOURCE_DIR  "${CMAKE_CURRENT_LIST_DIR}/../../core-utils/GTest/googletest" )
+
+if ( NOT WIN32 )
+  # ...mrmlj... weird quick-fix attempts for weird find_package( Threads ) failures in cpuinfo CMakeLists.txt
+  # https://stackoverflow.com/questions/40361522/cmake-failed-to-find-threads-package-with-cryptic-error-message
+  # https://stackoverflow.com/questions/14171740/cmake-with-ios-toolchain-cant-find-threads
+  enable_language( C )
+  find_package( Threads )
+  set( Threads_FOUND              TRUE      CACHE INTERNAL "" FORCE )
+  set( CMAKE_THREAD_LIBS_INIT     "-DDUMMY" CACHE INTERNAL "" FORCE )
+  set( CMAKE_USE_PTHREADS_INIT    1         CACHE INTERNAL "" FORCE )
+  set( CMAKE_HAVE_THREADS_LIBRARY 1         CACHE INTERNAL "" FORCE )
+endif()
