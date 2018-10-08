@@ -1,13 +1,17 @@
 
+if ( DEFINED CMAKE_SYSTEM_PROCESSOR_ORIGINAL )
+  set( CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR_ORIGINAL} )
+endif()
+
 include( ${CMAKE_CURRENT_LIST_DIR}/../../core-utils/CoreUtils/CoreUtils.cmake )
 
 target_compile_definitions( nnpack PRIVATE NNP_DISABLE_HALF_PRECISION=1 )
 if( NOT MSVC )
-    target_compile_options( nnpack PRIVATE ${TNUN_compiler_fastmath} )
-    # Workaround for PCH not supporting multiple elements inside generator expression
-    foreach( flag ${TNUN_compiler_optimize_for_speed} )
-        target_compile_options( nnpack PRIVATE $<$<CONFIG:RELEASE>:${flag}> )
-    endforeach()
+  target_compile_options( nnpack PRIVATE ${TNUN_compiler_fastmath} )
+  # Workaround for PCH not supporting multiple elements inside generator expression
+  foreach( flag ${TNUN_compiler_optimize_for_speed} )
+    target_compile_options( nnpack PRIVATE $<$<CONFIG:RELEASE>:${flag}> )
+  endforeach()
 endif()
 
 # silence NNPack warnings (noone is going to fix them anyway)

@@ -13,6 +13,9 @@ set( NNPACK_BUILD_TESTS       OFF                       CACHE BOOL     ""       
 
 if ( iOS )
   unset( CMAKE_SYSTEM_PROCESSOR )
+elseif ( CMAKE_SYSTEM_PROCESSOR STREQUAL "armv7" ) #...mrmlj...quick fix for nnpack searching for an exact (but different) string
+    set( CMAKE_SYSTEM_PROCESSOR          "armv7-a" )
+    set( CMAKE_SYSTEM_PROCESSOR_ORIGINAL "armv7"   )
 endif()
 
 set( CPUINFO_SOURCE_DIR     "${CMAKE_CURRENT_LIST_DIR}/cpuinfo"                           )
@@ -22,14 +25,4 @@ set( PSIMD_SOURCE_DIR       "${CMAKE_CURRENT_LIST_DIR}/psimd"                   
 set( PTHREADPOOL_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/pthreadpool"                       )
 set( GOOGLETEST_SOURCE_DIR  "${CMAKE_CURRENT_LIST_DIR}/../../core-utils/GTest/googletest" )
 
-if ( NOT WIN32 )
-  # ...mrmlj... weird quick-fix attempts for weird find_package( Threads ) failures in cpuinfo CMakeLists.txt
-  # https://stackoverflow.com/questions/40361522/cmake-failed-to-find-threads-package-with-cryptic-error-message
-  # https://stackoverflow.com/questions/14171740/cmake-with-ios-toolchain-cant-find-threads
-  enable_language( C )
-  find_package( Threads )
-  set( Threads_FOUND              TRUE      CACHE INTERNAL "" FORCE )
-  set( CMAKE_THREAD_LIBS_INIT     "-DDUMMY" CACHE INTERNAL "" FORCE )
-  set( CMAKE_USE_PTHREADS_INIT    1         CACHE INTERNAL "" FORCE )
-  set( CMAKE_HAVE_THREADS_LIBRARY 1         CACHE INTERNAL "" FORCE )
-endif()
+include( cpuinfo.cmake )
