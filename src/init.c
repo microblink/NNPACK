@@ -16,42 +16,48 @@
 struct hardware_info nnp_hwinfo = { };
 static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 
+    static uint32_t effective_cache_size( struct cpuinfo_cache const * const pCache, uint32_t const lowerLevelSize )
+    {
+        uint32_t size = 0;
+        if ( pCache )
+        {
+            size = pCache->size / pCache->processor_count;
+            if ( pCache->flags & CPUINFO_CACHE_INCLUSIVE )
+                size -= lowerLevelSize;
+        }
+        return size;
+    }
 
 	static void init_cache_info(void) {
-		const struct cpuinfo_cache* l1d = cpuinfo_get_l1d_cache(0);
-		if (l1d != NULL) {
-			nnp_hwinfo.cache.l1 = (struct cache_info) {
-				.size          = l1d->size,
-				.associativity = l1d->associativity,
-				.threads       = l1d->processor_count,
+        // TODO: https://github.com/Maratyszcza/NNPACK/issues/157
+        struct cpuinfo_processor const * const fastest_core = cpuinfo_get_processor( 0 );
+		nnp_hwinfo.cache.l1 = (struct cache_info) {
+			.size          = fastest_core->cache.l1d->size,
+			.associativity = fastest_core->cache.l1d->associativity,
+			.threads       = fastest_core->cache.l1d->processor_count,
+            .inclusive     = false,
+		};
+		nnp_hwinfo.cache.l2 = (struct cache_info) {
+			.size          = fastest_core->cache.l2->size,
+			.associativity = fastest_core->cache.l2->associativity,
+			.threads       = fastest_core->cache.l2->processor_count,
+			.inclusive     = !!(fastest_core->cache.l2->flags & CPUINFO_CACHE_INCLUSIVE),
+		};
+		if (fastest_core->cache.l3 != NULL) {
+			nnp_hwinfo.cache.l3 = (struct cache_info) {
+				.size          = fastest_core->cache.l3->size,
+				.associativity = fastest_core->cache.l3->associativity,
+				.threads       = fastest_core->cache.l3->processor_count,
+				.inclusive     = !!(fastest_core->cache.l3->flags & CPUINFO_CACHE_INCLUSIVE),
 			};
-			const struct cpuinfo_cache* l2 = cpuinfo_get_l2_cache(0);
-			if (l2 != NULL) {
-				nnp_hwinfo.cache.l2 = (struct cache_info) {
-					.size          = l2->size,
-					.associativity = l2->associativity,
-					.threads       = l2->processor_count,
-					.inclusive     = !!(l2->flags & CPUINFO_CACHE_INCLUSIVE),
-				};
-				const struct cpuinfo_cache* l3 = cpuinfo_get_l3_cache(0);
-				if (l3 != NULL) {
-					nnp_hwinfo.cache.l3 = (struct cache_info) {
-						.size          = l3->size,
-						.associativity = l3->associativity,
-						.threads       = l3->processor_count,
-						.inclusive     = !!(l3->flags & CPUINFO_CACHE_INCLUSIVE),
-					};
-					const struct cpuinfo_cache* l4 = cpuinfo_get_l4_cache(0);
-					if (l4 != NULL) {
-						nnp_hwinfo.cache.l4 = (struct cache_info) {
-							.size          = l4->size,
-							.associativity = l4->associativity,
-							.threads       = l4->processor_count,
-							.inclusive     = !!(l4->flags & CPUINFO_CACHE_INCLUSIVE),
-						};
-					}
-				}
-			}
+        }
+		if (fastest_core->cache.l4 != NULL) {
+			nnp_hwinfo.cache.l4 = (struct cache_info) {
+				.size          = fastest_core->cache.l4->size,
+				.associativity = fastest_core->cache.l4->associativity,
+				.threads       = fastest_core->cache.l4->processor_count,
+				.inclusive     = !!(fastest_core->cache.l4->flags & CPUINFO_CACHE_INCLUSIVE),
+			};
 		}
 	}
 
@@ -165,9 +171,10 @@ static void init_hwinfo(void) {
 		}
 	}
     if ( nnp_hwinfo.cache.l3.size == 0 ) { // https://github.com/Maratyszcza/NNPACK/issues/33
-        nnp_hwinfo.cache.l3 = nnp_hwinfo.cache.l2;
-        nnp_hwinfo.cache.l3.inclusive = false;
+        nnp_hwinfo.cache   .l3 = nnp_hwinfo.cache   .l2;
+        nnp_hwinfo.blocking.l3 = nnp_hwinfo.blocking.l2;
     }
+    else
 	if (nnp_hwinfo.cache.l3.size != 0) {
 		nnp_hwinfo.blocking.l3 = nnp_hwinfo.cache.l3.size;
 		if (nnp_hwinfo.cache.l3.inclusive) {
@@ -178,7 +185,7 @@ static void init_hwinfo(void) {
         }
 	}
 	nnp_hwinfo.blocking.l4 = nnp_hwinfo.cache.l4.size;
-	if (nnp_hwinfo.cache.l1.size && nnp_hwinfo.cache.l2.size && nnp_hwinfo.cache.l3.size) {
+	if (nnp_hwinfo.cache.l1.size && nnp_hwinfo.cache.l2.size) {
 		#if NNP_BACKEND_X86_64
 			if (cpuinfo_has_x86_avx2() && cpuinfo_has_x86_fma3()) {
 				nnp_hwinfo.simd_width = 8;
